@@ -1,0 +1,74 @@
+body {
+  background-color: white;
+}
+.well {
+  background-color: white;
+}
+.hed {
+  padding: 20px 100px 5px 100px;
+  background-color: #92CEF6;
+  color: black;
+  border-bottom: 10px;
+  border-radius: 10px;;
+}
+
+.sub-hed {
+  padding: 10px 0px 10px 0px;
+  color: black;
+  width: 50%;
+  float: left;
+  background-color: #CDEBF5;
+  border-radius: 10px;
+}
+.sub-hed2 {
+  padding: 10px 0px 43px 0px;
+  color: black;
+  width: 50%;
+  float: right;
+  background-color: #CDEBF5;
+  border-radius: 10px;
+}
+.sub-hed3 {
+  padding: 100px 0px 10px 0px;
+  text-align: center;
+  background-color: white;
+
+}
+.sub-hed4 {
+  padding: 10px 0px 10px 0px;
+  text-align: center;
+  background-color: #CDEBF5;
+  border-radius: 10px;
+}
+
+.pad-up {
+  padding-top: 10px;
+}
+
+.cont1 {
+  padding: 30px 0px 30px 0px;
+  background-color: #CDEBF5;
+  border-radius: 10px;
+}
+
+.cont2 {
+  margin-top: 40px;
+}
+
+.fut {
+  font-size: 13.5px;
+  font-weight: bold;
+}
+
+.container-fluid {
+
+}
+.cont5 {
+  margin: 30px;
+  padding: 20px 0px 20px 0px;
+  background-color: red;
+  border-radius: 10px;
+}
+.control-label {
+  border-radius: 25px;
+}
