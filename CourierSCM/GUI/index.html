@@ -1,0 +1,541 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Spare Route Directory</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel='shortcut icon' type='image/x-icon' href='img/download.jpg' />
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+</head>
+
+<!--
+<div class="loader"><center>
+  <img id="loader" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif"></center>
+</div> -->
+
+<body>
+<div class="container-fluid">
+    <div class="well">
+
+        <div class="text-center hed">
+            <h1><img src="img/download.jpg" height="57" width="57"> Automobile Spare Parts Shipping Service</h1>
+        </div>
+
+        <br>
+
+        <div class="cont1">
+
+            <div class="text-center sub-hed">
+                <h2> Send Parts to Manufacturer</h2>
+
+                <div class="text-center">
+                    <label for="pName" class="control-label">Enter Part's Name:</label>
+                    <input id="pName" placeholder="Part Name" type="text">
+                </div>
+
+                <div class="text-center">
+                    <label for="pNo" class="control-label">Number of Parts :</label>
+                    <input id="pNo" placeholder="#Number" type="int">
+                </div>
+
+                <div class="text-center">
+                    <label for="pId" class="control-label">ID of Parts :</label>
+                    <input id="pId" placeholder="#Parts-ID" type="int">
+                </div>
+
+                <div class="text-center">
+                    <label for="pPrice" class="control-label">Price Of Parts :</label>
+                    <input id="pPrice" placeholder="#Parts-Price" type="int">
+                </div>
+
+                <div class="text-center pad-up">
+                    <button id="sButton">Send Parts</button>
+                </div>
+            </div>
+            <!--      </div>-->
+
+            <!--      <br>-->
+            <!--      <div class="cont1">-->
+
+            <div class="text-center sub-hed2">
+                <h3>Use Parts Sent By OEM</h3>
+
+                <div class="text-center">
+                    <label for="rName" class="control-label">Enter Part's Name :</label>
+                    <input id="rName" placeholder="Part-Name" type="text">
+                </div>
+
+                <div class="text-center">
+                    <label for="rNo" class="control-label">Parts Used :</label>
+                    <input id="rNo" placeholder="#Number" type="int">
+                </div>
+
+                <div class="text-center pad-up">
+                    <button id="rButton">UseParts</button>
+                </div>
+
+                <div class="text-center pad-up">
+                    <lable for="remP" class="control-label">Remaining Parts :</lable>
+                    <input id="remP" placeholder="#Parts-ID" type="text">
+                    <button id="remButton">Find</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="text-center sub-hed3">
+            <h4 class="sub-hed3">Vehicle To Dealer</h4>
+            <div class="text-center">
+                <label for="partID" class="control-label">Parts ID :</label>
+                <input id="partID" placeholder="#ID" type="int">
+            </div>
+            <div class="text-center">
+                <lable for="vName" class="control-label">Vehicle Name :</lable>
+                <input id="vName" placeholder="#VehicleName" type="text">
+            </div>
+            <div class="text-center">
+                <label for="vID" class="control-label">Vehicle ID :</label>
+                <input id="vID" placeholder="#VehicleID" type="int">
+            </div>
+            <div class="text-center">
+                <button id="vButton">Assign Part to Vehicle</button>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="sub-hed4 text-center">
+            <label for="partID" class="control-label">Parts ID :</label>
+            <input id="partID" placeholder="#ID" type="int">
+
+            <button id="pLocation">Location Of Part</button>
+            <div class="text-center">
+                <label for="vID" class="control-label">Vehicle ID :</label>
+                <input id="vID" placeholder="#VehicleID" type="int">
+                <button id="vDone">Send Vehicle</button>
+            </div>
+        </div>
+        <br>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+
+    if(typeof web3 !== 'undefined'){
+        web3= new Web3(web3.currentProvider);
+    } else{
+        web3= new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/qNjs8vdB2KGt3QSe53cG"))//Add Blockchain Addr here
+    }
+
+    web3.eth.defaultAccount="Account address";
+
+    var ChainCont= web3.eth.contract([
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "CalcPoolMoney",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "part_name",
+                    "type": "bytes32"
+                }
+            ],
+            "name": "ShowTime",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "part_name",
+                    "type": "bytes32"
+                }
+            ],
+            "name": "ShowQuantity",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "partid",
+                    "type": "uint256"
+                }
+            ],
+            "name": "CheckPartPlace",
+            "outputs": [
+                {
+                    "name": "a",
+                    "type": "uint256"
+                },
+                {
+                    "name": "b",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "name_of_part",
+                    "type": "bytes32"
+                },
+                {
+                    "name": "how_many",
+                    "type": "uint256"
+                }
+            ],
+            "name": "AvailablePartAmount",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "defectiveitem",
+                    "type": "bytes32"
+                },
+                {
+                    "indexed": false,
+                    "name": "numberofdefective",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TheManufacturerRefundedTheDefectiveItem",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "nameofthepart",
+                    "type": "bytes32"
+                },
+                {
+                    "indexed": false,
+                    "name": "numberoftheparts",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TheManufacturerRequestedForMoreParts",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "nameofpart",
+                    "type": "bytes32"
+                },
+                {
+                    "indexed": false,
+                    "name": "numberofparts",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TheManufacturerRequestedForParts",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "oemaddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "itemname",
+                    "type": "bytes32"
+                },
+                {
+                    "indexed": false,
+                    "name": "quantityofitem",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TheOemAddedAnItem",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "_oemsaddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "moneyinthepoolforoem",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TheOemGotPaid",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "thevehicleid",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TheVehicleIsReadyToBeSendToTheDealer",
+            "type": "event"
+        },
+        {
+            "constant": false,
+            "inputs": [],
+            "name": "AddAutoFactory",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [],
+            "name": "InsertOEM",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "name",
+                    "type": "bytes32"
+                },
+                {
+                    "name": "quantity",
+                    "type": "uint256"
+                },
+                {
+                    "name": "ids",
+                    "type": "uint256"
+                },
+                {
+                    "name": "price",
+                    "type": "uint256"
+                }
+            ],
+            "name": "InsertParts",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_name_of_part",
+                    "type": "bytes32"
+                },
+                {
+                    "name": "no_of_pieces",
+                    "type": "uint256"
+                }
+            ],
+            "name": "defective",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "partid",
+                    "type": "uint256"
+                },
+                {
+                    "name": "vehicle_n",
+                    "type": "string"
+                },
+                {
+                    "name": "_vehicle_id",
+                    "type": "uint256"
+                }
+            ],
+            "name": "PartToAuto",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [],
+            "name": "ReimburseToOEM",
+            "outputs": [],
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "name_of_part",
+                    "type": "bytes32"
+                },
+                {
+                    "name": "how_many",
+                    "type": "uint256"
+                },
+                {
+                    "name": "id_of_item",
+                    "type": "uint256"
+                }
+            ],
+            "name": "UsingOEMParts",
+            "outputs": [],
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "vehicle_id_",
+                    "type": "uint256"
+                }
+            ],
+            "name": "AutoAssembled",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "constructor"
+        },
+        {
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "fallback"
+        }
+    ])
+    var Chain=ChainCont.at("0xd09e2947c3face783c006103d83b4509df209a2a");
+    console.log(Chain);
+
+    $("sButton").click($("pName").val(),$("pNo").val(),$("pId").val(),(err,res)=>{
+        if(!err){console.log(res)}
+        else{console.log("Error!")}
+    })
+
+    $("rButton").click($("rName").val(),$("rNo").val(),(err,res)=>{
+        if(!err){console.log(res)}
+        else{console.log("Error!")}
+    })
+
+    $("remButton").click($(remP).val(),(err,res)=>{
+        alert(res[0]);
+    })
+
+    var OEMPartEvent=Chain.TheOemAddedAnItem()
+
+    OEMPartEvent.watch(function(err,res){
+        if(!err){
+            alert("Part :"+ res.args.itemname +"Of :"+res.args.quantityofitem+"Given by:"+res.args.oemaddress)
+        }
+        else{console.log(err)}
+    })
+
+    var ManufMoreParts=Chain.TheManufacturerRequestedForMoreParts()
+
+    ManufMoreParts.watch(function(err,res){
+        if(!err){
+            alert("Manufacturer Requested "+res.args.numberofparts+"Number of "+res.args.nameofpart+" Parts")
+        }
+    })
+
+    $("vButton").click($("partID1").val(),$("vName").val(),$("vID").val(),function(err,res)=>{})
+
+    $("pLocation").click($("partID2").val(),function(err,res)=>{
+        alert("Vehice ID:"+res[0]+"Vehicle Name:"+res[1])
+    })
+    $("vDone").click($("vID1").val(),function(err,res)=>{
+
+    })
+
+    var VehicleDone=Chain.TheVehicleIsReadyToBeSendToTheDealer()
+
+    VehicleDone.watch(function(err,res){
+        if(!err){
+            alert("Vehicle:"+res.args.thevehicleid+"is to be delivered to Dealer")
+        }
+    })
+
+
+    //Will it work?
+    //Enter it later
+</script>
+
+</body>
+</html>
