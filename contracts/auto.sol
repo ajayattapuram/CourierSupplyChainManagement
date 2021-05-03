@@ -1,6 +1,4 @@
 
-
-
 pragma solidity ^0.4.0;
 
 contract SomeContract {
@@ -9,11 +7,11 @@ contract SomeContract {
 
   }
 
-  event TheOemAddedAnItem(address oemaddress,bytes32 itemname,uint quantityofitem);
-  event TheManufacturerRequestedForParts(bytes32 nameofpart,uint numberofparts);
-  event TheManufacturerRequestedForMoreParts(bytes32 nameofthepart,uint numberoftheparts);
+  event TheOemAddedAnItem(address oemaddress,string itemname,uint quantityofitem);
+  event TheManufacturerRequestedForParts(string nameofpart,uint numberofparts);
+  event TheManufacturerRequestedForMoreParts(string nameofthepart,uint numberoftheparts);
   event TheOemGotPaid(address _oemsaddress,uint moneyinthepoolforoem);
-  event TheManufacturerRefundedTheReturnDamagedItemsItem(bytes32 ReturnDamagedItemsitem,uint numberofReturnDamagedItems);
+  event TheManufacturerRefundedTheReturnDamagedItemsItem(string ReturnDamagedItemsitem,uint numberofReturnDamagedItems);
   event TheVehicleIsReadyToBeSendToTheDealer(uint thevehicleid);
 
   struct auto_industry {
@@ -62,42 +60,42 @@ contract SomeContract {
 
   }
 
-  mapping (bytes32 => uint) parts_mapping;
-  mapping (bytes32 => uint) id_mapping;
-  mapping (bytes32 => uint) time_mapping;
-  mapping (bytes32 => bytes32) hashing_item;
-  mapping (bytes32 => uint) price_mapping;
+  mapping (string => uint) parts_mapping;
+  mapping (string => uint) id_mapping;
+  mapping (string => uint) time_mapping;
+  mapping (string => bytes32) hashing_item;
+  mapping (string => uint) price_mapping;
 
   //takes input of part name,no of part,part id (for adding the part to list)
-  function InsertParts(bytes32 name, uint quantity, uint ids,uint price) onlyOEM {
+  function InsertParts(string name, uint quantity, uint ids, uint price) onlyOEM {
 
-    uint p=parts_mapping[name];
-    parts_mapping[name]=p+quantity;
-    uint time_now=now;
+    uint p = parts_mapping[name];
+    parts_mapping[name]=p + quantity;
+    uint time_now = now;
     id_mapping[name] = ids;
-    time_mapping[name]=time_now;
-    price_mapping[name]=price;
-    hashing_item[name]=sha3(name,ids,time_now);
+    time_mapping[name] = time_now;
+    price_mapping[name] = price;
+    hashing_item[name] = sha3(name,ids,time_now);
     TheOemAddedAnItem(msg.sender,name,quantity);
 
   }
 
   //ShowQuantitys the no of quantity remaining for a particular part
-  function ShowQuantity(bytes32 part_name) constant returns(uint) {
+  function ShowQuantity(string part_name) constant returns(uint) {
 
     return parts_mapping[part_name];
 
   }
 
   //not useful just for testing
-  function ShowTime(bytes32 part_name) constant returns(uint) {
+  function ShowTime(string part_name) constant returns(uint) {
 
     return time_mapping[part_name];
 
   }
 
   //modiier takes name and id of the part and tells weather it is genuine
-  modifier ConfirmPart(bytes32 name, uint id_item) {
+  modifier ConfirmPart(string name, uint id_item) {
 
     uint  time_created=time_mapping[name];
     bytes32 hash_temp=sha3(name,id_item,time_created);
@@ -114,7 +112,7 @@ contract SomeContract {
   uint pooltime;
 
   // used to calculate money for desired part from oem
-  function AvailablePartAmount (bytes32 name_of_part , uint how_many) constant returns(uint) {
+  function AvailablePartAmount (string name_of_part , uint how_many) constant returns(uint) {
 
     uint amount = how_many * price_mapping[name_of_part];
     return amount;
@@ -122,7 +120,7 @@ contract SomeContract {
   }
 
   // checking for authenticity of parts and paying temporarily to the pool
-  function UsingOEMParts(bytes32 name_of_part, uint how_many, uint id_of_item) ConfirmPart(name_of_part , id_of_item) payable {
+  function UsingOEMParts(string name_of_part, uint how_many, uint id_of_item) ConfirmPart(name_of_part , id_of_item) payable {
 
     if( parts_mapping[name_of_part] < how_many ){
       TheManufacturerRequestedForMoreParts(name_of_part,how_many);
@@ -146,7 +144,7 @@ contract SomeContract {
   }
 
   //for giving back ReturnDamagedItems items,after this manufacturer gets his money and oem takes the ReturnDamagedItems part
-  function ReturnDamagedItems(bytes32 _name_of_part, uint no_of_pieces) OnlyAutoFactory {
+  function ReturnDamagedItems(string _name_of_part, uint no_of_pieces) OnlyAutoFactory {
 
     uint __amount = no_of_pieces * price_mapping[_name_of_part];
     msg.sender.transfer(__amount);
@@ -191,6 +189,7 @@ contract SomeContract {
 //to set the status of manufactiring complete and is ready to be sent to the dealer
  function AutoAssembled(uint vehicle_id_)
  {
+
    completeness[vehicle_id_]=1;
    TheVehicleIsReadyToBeSendToTheDealer(vehicle_id_);
  }
